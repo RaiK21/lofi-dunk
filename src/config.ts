@@ -1,7 +1,7 @@
+import * as Phaser from 'phaser';
 import { BootScene } from './scenes/boot-scene';
 import { GameScene } from './scenes/game-scene';
 import { MainMenuScene } from './scenes/main-menu-scene';
-
 export const GameConfig: Phaser.Types.Core.GameConfig = {
   title: 'Lofi Dunk',
   url: 'https://github.com/digitsensitive/phaser3-typescript',
@@ -19,9 +19,9 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
     keyboard: true
   },
   physics: {
-    default: 'arcade',
-    arcade: {
-      gravity: { y: 300 }
+    default: 'matter',
+    matter: {
+      enableSleeping: true
     }
   },
   backgroundColor: '#98d687',

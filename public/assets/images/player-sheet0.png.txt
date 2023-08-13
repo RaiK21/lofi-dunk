@@ -1,0 +1,1 @@
+player-sheet0_01.png.png 192 64, player-sheet0_02.png.png 0 128, player-sheet0_03.png.png 0 192.

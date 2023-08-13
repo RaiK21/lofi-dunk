@@ -1,7 +1,10 @@
+import * as Phaser from 'phaser';
+
 export class MainMenuScene extends Phaser.Scene {
+
   private startKey: Phaser.Input.Keyboard.Key;
-  private titleBitmapText: Phaser.GameObjects.BitmapText;
-  private playBitmapText: Phaser.GameObjects.BitmapText;
+  // private titleBitmapText: Phaser.GameObjects.BitmapText;
+  // private playBitmapText: Phaser.GameObjects.BitmapText;
 
   constructor() {
     super({
@@ -17,23 +20,23 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.titleBitmapText = this.add.bitmapText(
-      0,
-      200,
-      'font',
-      'Lofi Dunk',
-      30
-    );
+    // this.titleBitmapText = this.add.bitmapText(
+    //   0,
+    //   200,
+    //   'font',
+    //   'Lofi Dunk',
+    //   30
+    // );
 
-    this.titleBitmapText.x = this.getCenterXPositionOfBitmapText(
-      this.titleBitmapText.width
-    );
+    // this.titleBitmapText.x = this.getCenterXPositionOfBitmapText(
+    //   this.titleBitmapText.width
+    // );
 
-    this.playBitmapText = this.add.bitmapText(0, 300, 'font', 'S: PLAY', 25);
+    // this.playBitmapText = this.add.bitmapText(0, 300, 'font', 'S: PLAY', 25);
 
-    this.playBitmapText.x = this.getCenterXPositionOfBitmapText(
-      this.playBitmapText.width
-    );
+    // this.playBitmapText.x = this.getCenterXPositionOfBitmapText(
+    //   this.playBitmapText.width
+    // );
   }
 
   update(): void {

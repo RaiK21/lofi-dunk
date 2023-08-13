@@ -1,12 +1,13 @@
-import { Bird } from '../objects/bird';
-import { Pipe } from '../objects/pipe';
+// import { Bird } from '../objects/bird';
+// import { Pipe } from '../objects/pipe';
+import * as Phaser from 'phaser';
 
 export class GameScene extends Phaser.Scene {
-  private bird: Bird;
-  private pipes: Phaser.GameObjects.Group;
-  private background: Phaser.GameObjects.TileSprite;
-  private scoreText: Phaser.GameObjects.BitmapText;
-  private timer: Phaser.Time.TimerEvent;
+  // private bird: Bird;
+  // private pipes: Phaser.GameObjects.Group;
+  // private background: Phaser.GameObjects.TileSprite;
+  // private scoreText: Phaser.GameObjects.BitmapText;
+  // private timer: Phaser.Time.TimerEvent;
 
   constructor() {
     super({
@@ -19,70 +20,80 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.background = this.add
-      .tileSprite(0, 0, 390, 600, 'background')
-      .setOrigin(0, 0);
+    // this.background = this.add
+    //   .tileSprite(0, 0, 390, 600, 'background')
+    //   .setOrigin(0, 0);
 
-    this.scoreText = this.add
-      .bitmapText(
-        this.sys.canvas.width / 2 - 14,
-        30,
-        'font',
-        this.registry.values.score
-      )
-      .setDepth(2);
+    // this.scoreText = this.add
+    //   .bitmapText(
+    //     this.sys.canvas.width / 2 - 14,
+    //     30,
+    //     'font',
+    //     this.registry.values.score
+    //   )
+    //   .setDepth(2);
 
-    this.pipes = this.add.group({});
+    // this.pipes = this.add.group({});
 
-    this.bird = new Bird({
-      scene: this,
-      x: 50,
-      y: 100,
-      texture: 'bird'
-    });
+    // this.bird = new Bird({
+    //   scene: this,
+    //   x: 50,
+    //   y: 100,
+    //   texture: 'bird'
+    // });
 
-    this.addNewRowOfPipes();
+    // this.addNewRowOfPipes();
 
-    this.timer = this.time.addEvent({
-      delay: 1500,
-      callback: this.addNewRowOfPipes,
-      callbackScope: this,
-      loop: true
-    });
+    // this.timer = this.time.addEvent({
+    //   delay: 1500,
+    //   callback: this.addNewRowOfPipes,
+    //   callbackScope: this,
+    //   loop: true
+    // });
+      
+    this.matter.world.setBounds(0, 0, this.sys.canvas.width , this.sys.canvas.height , 32, true, true, false, true);
+    //  Add in a stack of balls
+
+    for (let i = 0; i < 64; i++) {
+      const ball = this.matter.add.image(Phaser.Math.Between(100, 700), Phaser.Math.Between(-600, 0), 'ball');
+      ball.setCircle(ball.width*0.5)
+      ball.setFriction(0.005);
+      ball.setBounce(1);
+    }
   }
 
   update(): void {
-    if (!this.bird.getDead()) {
-      this.background.tilePositionX += 4;
-      this.bird.update();
-      this.physics.overlap(
-        this.bird,
-        this.pipes,
-        function () {
-          this.bird.setDead(true);
-        },
-        null,
-        this
-      );
-    } else {
-      Phaser.Actions.Call(
-        this.pipes.getChildren(),
-        function (pipe: Pipe) {
-          pipe.body.setVelocityX(0);
-        },
-        this
-      );
+    // if (!this.bird.getDead()) {
+    //   this.background.tilePositionX += 4;
+    //   this.bird.update();
+    //   this.physics.overlap(
+    //     this.bird,
+    //     this.pipes,
+    //     function () {
+    //       this.bird.setDead(true);
+    //     },
+    //     null,
+    //     this
+    //   );
+    // } else {
+    //   Phaser.Actions.Call(
+    //     this.pipes.getChildren(),
+    //     function (pipe: Pipe) {
+    //       pipe.body.setVelocityX(0);
+    //     },
+    //     this
+    //   );
 
-      if (this.bird.y > this.sys.canvas.height) {
-        this.scene.start('MainMenuScene');
-      }
-    }
+    //   if (this.bird.y > this.sys.canvas.height) {
+    //     this.scene.start('MainMenuScene');
+    //   }
+    // }
   }
 
   private addNewRowOfPipes(): void {
     // update the score
     this.registry.values.score += 1;
-    this.scoreText.setText(this.registry.values.score);
+    // this.scoreText.setText(this.registry.values.score);
 
     // randomly pick a number between 1 and 5
     let hole = Math.floor(Math.random() * 5) + 1;
@@ -103,14 +114,14 @@ export class GameScene extends Phaser.Scene {
 
   private addPipe(x: number, y: number, frame: number): void {
     // create a new pipe at the position x and y and add it to group
-    this.pipes.add(
-      new Pipe({
-        scene: this,
-        x: x,
-        y: y,
-        frame: frame,
-        texture: 'pipe'
-      })
-    );
+    // this.pipes.add(
+    //   new Pipe({
+    //     scene: this,
+    //     x: x,
+    //     y: y,
+    //     frame: frame,
+    //     texture: 'pipe'
+    //   })
+    // );
   }
 }

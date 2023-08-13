@@ -1,3 +1,5 @@
+import * as Phaser from 'phaser';
+
 export class BootScene extends Phaser.Scene {
   private loadingBar: Phaser.GameObjects.Graphics;
   private progressBar: Phaser.GameObjects.Graphics;
@@ -12,7 +14,6 @@ export class BootScene extends Phaser.Scene {
     // set the background and create loading bar
     this.cameras.main.setBackgroundColor(0x98d687);
     this.createLoadingbar();
-
     // pass value to change the loading bar fill
     this.load.on(
       'progress',
@@ -40,7 +41,8 @@ export class BootScene extends Phaser.Scene {
     );
 
     // load out package
-    this.load.pack('preload', './assets/pack.json', 'preload');
+    // this.load.pack('preload', './assets/pack.json', 'preload');
+    this.load.image('ball', 'assets/images/ball.png');
   }
 
   update(): void {
