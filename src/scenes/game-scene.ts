@@ -2,6 +2,7 @@
 // import { Pipe } from '../objects/pipe';
 import * as Phaser from 'phaser';
 import GameScreen from '../constants/GameScreen';
+import { Rim } from '../entity/rim';
 
 export class GameScene extends Phaser.Scene {
   // private bird: Bird;
@@ -10,6 +11,7 @@ export class GameScene extends Phaser.Scene {
   // private scoreText: Phaser.GameObjects.BitmapText;
   // private timer: Phaser.Time.TimerEvent;
   private ball: Phaser.Physics.Matter.Image | null = null;
+  private rim: Rim | null = null;
   constructor() {
     super({
       key: 'GameScene'
@@ -26,19 +28,16 @@ export class GameScene extends Phaser.Scene {
     this.matter.world.setBounds(-GameScreen.QUARTER_X, 0, GameScreen.WIDTH * 1.5, GameScreen.HEIGHT * 0.875, 32, false, false, false, true);
 
     //#region Ball
-    //  Add in a stack of balls
     this.ball = this.matter.add.image(GameScreen.CENTER_X, GameScreen.CENTER_Y, 'ball')
     this.ball.setCircle(this.ball.width * 0.5).setFriction(0.005).setBounce(1);
     //#endregion
 
-
-    //#region ground
-
-
     //#region rim
-
+    this.rim = new Rim(this, {
+      x: GameScreen.CENTER_X,
+      y: GameScreen.CENTER_Y,
+    })
     //#endregion
-
 
     //#region Controls
     const cursors = this.input.keyboard?.createCursorKeys();
@@ -65,7 +64,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   bounce() {
-    this.ball.setVelocity(2, -10);
+    this.ball?.setVelocity(2, -10);
   }
 
   update(): void {
@@ -106,27 +105,6 @@ export class GameScene extends Phaser.Scene {
     // }
   }
 
-  private addNewRowOfPipes(): void {
-    // update the score
-    this.registry.values.score += 1;
-    // this.scoreText.setText(this.registry.values.score);
-
-    // randomly pick a number between 1 and 5
-    let hole = Math.floor(Math.random() * 5) + 1;
-
-    // add 6 pipes with one big hole at position hole and hole + 1
-    for (let i = 0; i < 10; i++) {
-      if (i !== hole && i !== hole + 1 && i !== hole + 2) {
-        if (i === hole - 1) {
-          this.addPipe(400, i * 60, 0);
-        } else if (i === hole + 3) {
-          this.addPipe(400, i * 60, 1);
-        } else {
-          this.addPipe(400, i * 60, 2);
-        }
-      }
-    }
-  }
 
   private addPipe(x: number, y: number, frame: number): void {
     // create a new pipe at the position x and y and add it to group

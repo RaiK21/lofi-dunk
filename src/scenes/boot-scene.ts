@@ -44,7 +44,7 @@ export class BootScene extends Phaser.Scene {
     // this.load.pack('preload', './assets/pack.json', 'preload');
     this.load.image('ball', 'assets/images/ball.png');
     this.load.image('startBtn', 'assets/images/button_1.png');
-    this.load.image('startBtn', 'assets/images/button_1.png');
+    this.load.image('dot', 'assets/images/whiteDot.jpg');
   }
 
   update(): void {

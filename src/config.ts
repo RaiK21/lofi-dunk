@@ -19,7 +19,8 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
   physics: {
     default: 'matter',
     matter: {
-      enableSleeping: true
+      // enableSleeping: true
+      debug:true,
     }
   },
   backgroundColor: '#000',
