@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import GameScreen from '../constants/GameScreen';
 
 export class MainMenuScene extends Phaser.Scene {
 
@@ -13,13 +14,16 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   init(): void {
-    this.startKey = this.input.keyboard.addKey(
-      Phaser.Input.Keyboard.KeyCodes.S
+    this.startKey = this.input.keyboard?.addKey(
+      Phaser.Input.Keyboard.KeyCodes.SPACE
     );
     this.startKey.isDown = false;
   }
 
   create(): void {
+    this.startBtn = this.add.sprite(GameScreen.CENTER_X, GameScreen.QUARTER_Y * 3, 'startBtn').setInteractive().on('pointerup', () => {
+      this.scene.start('GameScene');
+    }, this);
     // this.titleBitmapText = this.add.bitmapText(
     //   0,
     //   200,

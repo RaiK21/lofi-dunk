@@ -4,8 +4,6 @@ import { GameScene } from './scenes/game-scene';
 import { MainMenuScene } from './scenes/main-menu-scene';
 export const GameConfig: Phaser.Types.Core.GameConfig = {
   title: 'Lofi Dunk',
-  url: 'https://github.com/digitsensitive/phaser3-typescript',
-  version: '1.0',
   type: Phaser.AUTO,
   scale: {
     parent: 'game',
@@ -24,6 +22,6 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
       enableSleeping: true
     }
   },
-  backgroundColor: '#98d687',
+  backgroundColor: '#000',
   // render: { pixelArt: true, antialias: false }
 };

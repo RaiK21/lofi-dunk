@@ -1,6 +1,7 @@
 // import { Bird } from '../objects/bird';
 // import { Pipe } from '../objects/pipe';
 import * as Phaser from 'phaser';
+import GameScreen from '../constants/GameScreen';
 
 export class GameScene extends Phaser.Scene {
   // private bird: Bird;
@@ -8,7 +9,7 @@ export class GameScene extends Phaser.Scene {
   // private background: Phaser.GameObjects.TileSprite;
   // private scoreText: Phaser.GameObjects.BitmapText;
   // private timer: Phaser.Time.TimerEvent;
-
+  private ball: Phaser.Physics.Matter.Image | null = null;
   constructor() {
     super({
       key: 'GameScene'
@@ -19,50 +20,65 @@ export class GameScene extends Phaser.Scene {
     this.registry.set('score', -1);
   }
 
-  create(): void {
-    // this.background = this.add
-    //   .tileSprite(0, 0, 390, 600, 'background')
-    //   .setOrigin(0, 0);
+  create() {
+    console.log('%c Game ', 'background: green; color: white; display: block;');
 
-    // this.scoreText = this.add
-    //   .bitmapText(
-    //     this.sys.canvas.width / 2 - 14,
-    //     30,
-    //     'font',
-    //     this.registry.values.score
-    //   )
-    //   .setDepth(2);
+    this.matter.world.setBounds(-GameScreen.QUARTER_X, 0, GameScreen.WIDTH * 1.5, GameScreen.HEIGHT * 0.875, 32, false, false, false, true);
 
-    // this.pipes = this.add.group({});
-
-    // this.bird = new Bird({
-    //   scene: this,
-    //   x: 50,
-    //   y: 100,
-    //   texture: 'bird'
-    // });
-
-    // this.addNewRowOfPipes();
-
-    // this.timer = this.time.addEvent({
-    //   delay: 1500,
-    //   callback: this.addNewRowOfPipes,
-    //   callbackScope: this,
-    //   loop: true
-    // });
-      
-    this.matter.world.setBounds(0, 0, this.sys.canvas.width , this.sys.canvas.height , 32, true, true, false, true);
+    //#region Ball
     //  Add in a stack of balls
+    this.ball = this.matter.add.image(GameScreen.CENTER_X, GameScreen.CENTER_Y, 'ball')
+    this.ball.setCircle(this.ball.width * 0.5).setFriction(0.005).setBounce(1);
+    //#endregion
 
-    for (let i = 0; i < 64; i++) {
-      const ball = this.matter.add.image(Phaser.Math.Between(100, 700), Phaser.Math.Between(-600, 0), 'ball');
-      ball.setCircle(ball.width*0.5)
-      ball.setFriction(0.005);
-      ball.setBounce(1);
-    }
+
+    //#region ground
+
+
+    //#region rim
+
+    //#endregion
+
+
+    //#region Controls
+    const cursors = this.input.keyboard?.createCursorKeys();
+    this.space = this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    const controlConfig = {
+      camera: this.cameras.main,
+      left: cursors.left,
+      right: cursors.right,
+      up: cursors.up,
+      down: cursors.down,
+      zoomIn: this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.Q),
+      zoomOut: this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.E),
+      acceleration: 0.06,
+      drag: 0.0005,
+      maxSpeed: 1.0
+    };
+    // this.add.text(0, 0, 'Use Cursors to scroll camera.\nClick to Quit', { font: '18px Courier', fill: '#00ff00' }).setScrollFactor(0);
+    this.input.keyboard?.on(Phaser.Input.Keyboard.KeyCodes.SPACE, this.bounce, this);
+    this.input.on('pointerdown', this.bounce, this);
+    this.space.on('down', this.bounce, this)
+    this.input.once('pointerup', function () {
+    }, this);
+    //#endregion
+  }
+
+  bounce() {
+    this.ball.setVelocity(2, -10);
   }
 
   update(): void {
+    if (this.ball) {
+      if (this.ball.x - this.ball.width * 0.5 > GameScreen.WIDTH) {
+        this.ball.setX(GameScreen.LEFT - this.ball.width * 0.5)
+      }
+      else if (this.ball.x + this.ball.width * 0.5 < GameScreen.LEFT) {
+        this.ball.setX(GameScreen.RIGHT + this.ball.width * 0.5)
+      }
+    }
+
+
     // if (!this.bird.getDead()) {
     //   this.background.tilePositionX += 4;
     //   this.bird.update();
