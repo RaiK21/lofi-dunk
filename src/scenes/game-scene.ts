@@ -3,6 +3,7 @@
 import * as Phaser from 'phaser';
 import GameScreen from '../constants/GameScreen';
 import { Rim } from '../entity/rim';
+import { Dirs } from '../enums/Enum';
 
 export class GameScene extends Phaser.Scene {
   // private bird: Bird;
@@ -37,6 +38,7 @@ export class GameScene extends Phaser.Scene {
       x: GameScreen.CENTER_X,
       y: GameScreen.CENTER_Y,
     })
+    this.rim.moveIn(Dirs.LEFT)
     //#endregion
 
     //#region Controls

@@ -1,4 +1,4 @@
-export enum DIRECTIONS {
+export enum Dirs {
     LEFT = "LEFT",
     RIGHT = "RIGHT",
     UP = "UP",
