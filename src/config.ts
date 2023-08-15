@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { BootScene } from './scenes/boot-scene';
 import { GameScene } from './scenes/game-scene';
+import { GameSceneUI } from './scenes/game-scene-ui';
 import { MainMenuScene } from './scenes/main-menu-scene';
 export const GameConfig: Phaser.Types.Core.GameConfig = {
   title: 'Lofi Dunk',
@@ -12,7 +13,7 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
     width: 720,
     height: 1280,
   },
-  scene: [BootScene, MainMenuScene, GameScene],
+  scene: [BootScene, MainMenuScene, GameScene, GameSceneUI],
   input: {
     keyboard: true
   },
@@ -20,7 +21,7 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
     default: 'matter',
     matter: {
       // enableSleeping: true
-      debug:true,
+      debug: true,
     }
   },
   backgroundColor: '#000',

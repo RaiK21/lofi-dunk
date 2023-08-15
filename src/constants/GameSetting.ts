@@ -16,4 +16,9 @@ export default class GameSetting {
     MIN: 3000,
     REDUCE: 100,
   }
+
+  static SCORE = {
+    MULTPLIER: 1,
+    MAX_COMBO: 10
+  }
 }

@@ -8,7 +8,7 @@ export class Timebar extends Phaser.GameObjects.Container {
     private _graphics;
 
     private _progress: number = 0;
-    constructor(scene: Phaser.Scene, config: { x: number, y: number }) {
+    constructor(scene: Phaser.Scene) {
         super(scene);
         this.scene = scene;
         this._graphics = this.scene.add.graphics({ x: 0, y: 0 });
