@@ -16,6 +16,7 @@ export class Rim extends Phaser.GameObjects.Container {
 
     private _spawnHeight: Vector = { x: GameScreen.QUARTER_Y, y: GameScreen.QUARTER_Y * 3 }
 
+    private _lastDir: Dirs = Dirs.LEFT;
     constructor(scene: Phaser.Scene, config: { x: number, y: number }) {
         super(scene);
         this.scene = scene;
@@ -57,10 +58,10 @@ export class Rim extends Phaser.GameObjects.Container {
                 //  We only want sensor collisions
                 if (pairs[i].isSensor) {
                     if (bodyA.label === 'topSensor' || bodyB.label === 'topSensor') {
-                        this.hitLog.push('topSensor')
+                        this._updateHitLog('topSensor')
                     }
                     if (bodyA.label === 'btmSensor' || bodyB.label === 'btmSensor') {
-                        this.hitLog.push('btmSensor')
+                        this._updateHitLog('btmSensor')
                         if (this.hitLog[0] === 'topSensor') {
                             GlobalEventEmitter.emit(GlobalEvent.SCORE)
                         }
@@ -69,7 +70,7 @@ export class Rim extends Phaser.GameObjects.Container {
             }
         });
 
-        this.scene.matter.world.on('collisionEnd', event => {
+        this.scene.matter.world.on('collisionend', event => {
             //  Loop through all of the collision pairs
             const pairs = event.pairs;
             for (let i = 0; i < pairs.length; i++) {
@@ -77,7 +78,7 @@ export class Rim extends Phaser.GameObjects.Container {
                 const bodyB = pairs[i].bodyB;
                 //  We only want sensor collisions
                 if (pairs[i].isSensor) {
-                    this.hitLog = [];
+                    this._updateHitLog()
                 }
             }
         });
@@ -94,7 +95,8 @@ export class Rim extends Phaser.GameObjects.Container {
     update(): void {
     }
 
-    moveIn(direction: Dirs) {
+    moveIn(direction: Dirs, callback: () => void) {
+        this._lastDir = direction;
         let startX;
         let endX;
         switch (direction) {
@@ -116,11 +118,53 @@ export class Rim extends Phaser.GameObjects.Container {
             onUpdate: () => {
                 this.updatePos()
             },
+            onComplete: () => {
+                this._updateHitLog()
+                callback()
+            },
             ease: 'Sine.easeInOut',
             duration: 250,
             // repeat: -1,
             yoyo: false
         });
+    }
+
+    moveOut(callback: () => void) {
+        let startX;
+        let endX;
+        switch (this._lastDir) {
+            case Dirs.LEFT:
+                startX = (this.gapRadius + this.colliderLength) * -1 + GameScreen.LEFT
+                endX = GameScreen.LEFT + (this.gapRadius + this.colliderLength)
+                break;
+            case Dirs.RIGHT:
+                startX = (this.gapRadius + this.colliderLength) + GameScreen.RIGHT
+                endX = GameScreen.RIGHT - (this.gapRadius + this.colliderLength)
+                break;
+        }
+        this.scene.tweens.add({
+            targets: this,
+            x: startX,
+            onUpdate: () => {
+                this.updatePos()
+            },
+            onComplete: () => {
+                callback()
+            },
+            ease: 'Sine.easeInOut',
+            duration: 250,
+            // repeat: -1,
+            yoyo: false
+        });
+    }
+
+    private _updateHitLog(log: string = '') {
+        if (log === '') {
+            this.hitLog = [];
+        }
+        else {
+            this.hitLog.push(log);
+        }
     }
 
     private _getRandomY() {

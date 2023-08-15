@@ -8,3 +8,9 @@ export enum Dirs {
 export enum GlobalEvent {
     SCORE = "score",
 }
+
+export enum GameState {
+    READY = "ready",
+    SCORING = "scoring",
+    OVER = 'over'
+}

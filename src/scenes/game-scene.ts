@@ -1,9 +1,11 @@
 // import { Bird } from '../objects/bird';
 // import { Pipe } from '../objects/pipe';
+import { Vector } from 'matter';
 import * as Phaser from 'phaser';
 import GameScreen from '../constants/GameScreen';
+import GameSetting from '../constants/GameSetting';
 import { Rim } from '../entity/rim';
-import { Dirs, GlobalEvent } from '../enums/Enum';
+import { Dirs, GameState, GlobalEvent } from '../enums/Enum';
 import GlobalEventEmitter from '../event/Event';
 
 export class GameScene extends Phaser.Scene {
@@ -14,6 +16,9 @@ export class GameScene extends Phaser.Scene {
   // private timer: Phaser.Time.TimerEvent;
   private ball: Phaser.Physics.Matter.Image | null = null;
   private rim: Rim | null = null;
+  private _gameState: GameState = GameState.READY;
+  private _gameDir: Dirs = Dirs.LEFT;
+  private _ballVelocity: Vector = { x: 0, y: 0 };
   constructor() {
     super({
       key: 'GameScene'
@@ -34,13 +39,12 @@ export class GameScene extends Phaser.Scene {
     this.ball = this.matter.add.image(GameScreen.CENTER_X, GameScreen.CENTER_Y, 'ball')
     this.ball.setCircle(this.ball.width * 0.5).setFriction(0.005).setBounce(1);
     //#endregion
-
     //#region rim
     this.rim = new Rim(this, {
-      x: GameScreen.CENTER_X,
-      y: GameScreen.CENTER_Y,
+      x: -GameScreen.WIDTH,
+      y: -GameScreen.HEIGHT,
     })
-    this.rim.moveIn(Dirs.LEFT)
+    this._setNextLevel();
     //#endregion
 
     //#region Controls
@@ -65,16 +69,43 @@ export class GameScene extends Phaser.Scene {
     this.input.once('pointerup', function () {
     }, this);
     //#endregion
-
   }
 
-  setupEvent()
-  {
-    GlobalEventEmitter.on(GlobalEvent.SCORE,()=>{console.log('we did it!')})
+  setupEvent() {
+    GlobalEventEmitter.on(GlobalEvent.SCORE, () => {
+      if (this._gameState !== GameState.SCORING) {
+        this._setGameState(GameState.SCORING)
+        this._setNextLevel();
+      }
+    })
   }
 
   bounce() {
-    this.ball?.setVelocity(2, -10);
+    this.ball?.setVelocity(this._ballVelocity.x, this._ballVelocity.y);
+  }
+
+  private _setGameState(state: GameState) {
+    this._gameState = state;
+  }
+
+  private _setNextLevel() {
+    switch (this._gameDir) {
+      case Dirs.LEFT:
+        this._gameDir = Dirs.RIGHT;
+        this._ballVelocity.x = GameSetting.BALL_FORCE.X;
+        this._ballVelocity.y = GameSetting.BALL_FORCE.Y;
+        break;
+      case Dirs.RIGHT:
+        this._gameDir = Dirs.LEFT;
+        this._ballVelocity.x = GameSetting.BALL_FORCE.X * -1;
+        this._ballVelocity.y = GameSetting.BALL_FORCE.Y;
+        break;
+    }
+    this.rim?.moveOut(() => {
+      this.rim?.moveIn(this._gameDir, () => {
+        this._setGameState(GameState.READY)
+      })
+    });
   }
 
   update(): void {
@@ -86,9 +117,6 @@ export class GameScene extends Phaser.Scene {
         this.ball.setX(GameScreen.RIGHT + this.ball.width * 0.5)
       }
     }
-
-
-    
 
     // if (!this.bird.getDead()) {
     //   this.background.tilePositionX += 4;
