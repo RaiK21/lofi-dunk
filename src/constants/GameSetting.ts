@@ -10,4 +10,10 @@ export default class GameSetting {
     start: GameScreen.QUARTER_Y,
     end: GameScreen.QUARTER_Y * 3,
   }
+
+  static TIME = {
+    MAX: 8000,
+    MIN: 3000,
+    REDUCE: 100,
+  }
 }

@@ -170,6 +170,6 @@ export class Rim extends Phaser.GameObjects.Container {
     private _getRandomY() {
         return Phaser.Math.FloatBetween(this._spawnHeight.x, this._spawnHeight.y);
     }
-
+    
 
 }

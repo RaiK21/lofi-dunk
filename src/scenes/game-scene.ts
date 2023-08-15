@@ -5,6 +5,7 @@ import * as Phaser from 'phaser';
 import GameScreen from '../constants/GameScreen';
 import GameSetting from '../constants/GameSetting';
 import { Rim } from '../entity/rim';
+import { Timebar } from '../entity/Timebar';
 import { Dirs, GameState, GlobalEvent } from '../enums/Enum';
 import GlobalEventEmitter from '../event/Event';
 
@@ -16,9 +17,12 @@ export class GameScene extends Phaser.Scene {
   // private timer: Phaser.Time.TimerEvent;
   private ball: Phaser.Physics.Matter.Image | null = null;
   private rim: Rim | null = null;
+  private _timeBar: Timebar | null = null;
   private _gameState: GameState = GameState.READY;
   private _gameDir: Dirs = Dirs.LEFT;
   private _ballVelocity: Vector = { x: 0, y: 0 };
+  private _level: number = 0;
+
   constructor() {
     super({
       key: 'GameScene'
@@ -44,6 +48,7 @@ export class GameScene extends Phaser.Scene {
       x: -GameScreen.WIDTH,
       y: -GameScreen.HEIGHT,
     })
+    this._timeBar = new Timebar(this)
     this._setNextLevel();
     //#endregion
 
@@ -73,10 +78,15 @@ export class GameScene extends Phaser.Scene {
 
   setupEvent() {
     GlobalEventEmitter.on(GlobalEvent.SCORE, () => {
-      if (this._gameState !== GameState.SCORING) {
+      if (this._gameState === GameState.READY) {
         this._setGameState(GameState.SCORING)
         this._setNextLevel();
       }
+    })
+
+    GlobalEventEmitter.on(GlobalEvent.OVER, () => {
+      this._setGameState(GameState.OVER)
+      this.rim?.moveOut(() => { });
     })
   }
 
@@ -89,6 +99,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private _setNextLevel() {
+    this._timeBar?.stopTimer();
     switch (this._gameDir) {
       case Dirs.LEFT:
         this._gameDir = Dirs.RIGHT;
@@ -104,8 +115,14 @@ export class GameScene extends Phaser.Scene {
     this.rim?.moveOut(() => {
       this.rim?.moveIn(this._gameDir, () => {
         this._setGameState(GameState.READY)
+        this.updateTimerBar()
       })
     });
+  }
+
+  updateTimerBar() {
+    let currentTime = GameSetting.TIME.MAX - this._level * GameSetting.TIME.REDUCE;
+    this._timeBar?.startTimer(currentTime <= GameSetting.TIME.MIN ? GameSetting.TIME.MIN : currentTime);
   }
 
   update(): void {
@@ -117,45 +134,6 @@ export class GameScene extends Phaser.Scene {
         this.ball.setX(GameScreen.RIGHT + this.ball.width * 0.5)
       }
     }
-
-    // if (!this.bird.getDead()) {
-    //   this.background.tilePositionX += 4;
-    //   this.bird.update();
-    //   this.physics.overlap(
-    //     this.bird,
-    //     this.pipes,
-    //     function () {
-    //       this.bird.setDead(true);
-    //     },
-    //     null,
-    //     this
-    //   );
-    // } else {
-    //   Phaser.Actions.Call(
-    //     this.pipes.getChildren(),
-    //     function (pipe: Pipe) {
-    //       pipe.body.setVelocityX(0);
-    //     },
-    //     this
-    //   );
-
-    //   if (this.bird.y > this.sys.canvas.height) {
-    //     this.scene.start('MainMenuScene');
-    //   }
-    // }
-  }
-
-
-  private addPipe(x: number, y: number, frame: number): void {
-    // create a new pipe at the position x and y and add it to group
-    // this.pipes.add(
-    //   new Pipe({
-    //     scene: this,
-    //     x: x,
-    //     y: y,
-    //     frame: frame,
-    //     texture: 'pipe'
-    //   })
-    // );
+    this._timeBar?.update();
   }
 }
