@@ -4,3 +4,7 @@ export enum Dirs {
     UP = "UP",
     DOWN = "DOWN",
 }
+
+export enum GlobalEvent {
+    SCORE = "score",
+}

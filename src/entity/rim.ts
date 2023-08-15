@@ -1,14 +1,17 @@
 import { Vector } from 'matter';
 import * as Phaser from 'phaser';
 import GameScreen from '../constants/GameScreen';
-import { Dirs } from '../enums/Enum';
+import { Dirs, GlobalEvent } from '../enums/Enum';
+import GlobalEventEmitter from '../event/Event';
 export class Rim extends Phaser.GameObjects.Container {
     private edge1: Phaser.Physics.Matter.Image | null = null;
     private edge2: Phaser.Physics.Matter.Image | null = null;
+    private sensor1: Phaser.Physics.Matter.Image | null = null;
+    private sensor2: Phaser.Physics.Matter.Image | null = null;
+    private hitLog: string[] = [];
     private objects: any[] = [];
     private gapRadius: number = 50;
     private colliderLength: number = 10;
-
     private _lastPosition: Vector = { x: 0, y: 0 }
 
     private _spawnHeight: Vector = { x: GameScreen.QUARTER_Y, y: GameScreen.QUARTER_Y * 3 }
@@ -23,12 +26,61 @@ export class Rim extends Phaser.GameObjects.Container {
         this.objects.push(this.edge2)
 
 
+        this.sensor1 = this.scene.matter.add.image(0, 10, 'dot', undefined, {
+            label: 'topSensor',
+            isSensor: true,
+            isStatic: true,
+        }).setScale(this.colliderLength, this.colliderLength)
+        this.objects.push(this.sensor1)
+
+        this.sensor2 = this.scene.matter.add.image(0, 40, 'dot', undefined, {
+            label: 'btmSensor',
+            isSensor: true,
+            isStatic: true,
+        }).setScale(this.colliderLength, this.colliderLength)
+        this.objects.push(this.sensor2)
 
         this.updatePos();
         this.objects.forEach((object) => {
             this.scene.add.existing(object);
         })
         this.scene.add.existing(this);
+
+
+
+        this.scene.matter.world.on('collisionstart', event => {
+            //  Loop through all of the collision pairs
+            const pairs = event.pairs;
+            for (let i = 0; i < pairs.length; i++) {
+                const bodyA = pairs[i].bodyA;
+                const bodyB = pairs[i].bodyB;
+                //  We only want sensor collisions
+                if (pairs[i].isSensor) {
+                    if (bodyA.label === 'topSensor' || bodyB.label === 'topSensor') {
+                        this.hitLog.push('topSensor')
+                    }
+                    if (bodyA.label === 'btmSensor' || bodyB.label === 'btmSensor') {
+                        this.hitLog.push('btmSensor')
+                        if (this.hitLog[0] === 'topSensor') {
+                            GlobalEventEmitter.emit(GlobalEvent.SCORE)
+                        }
+                    }
+                }
+            }
+        });
+
+        this.scene.matter.world.on('collisionEnd', event => {
+            //  Loop through all of the collision pairs
+            const pairs = event.pairs;
+            for (let i = 0; i < pairs.length; i++) {
+                const bodyA = pairs[i].bodyA;
+                const bodyB = pairs[i].bodyB;
+                //  We only want sensor collisions
+                if (pairs[i].isSensor) {
+                    this.hitLog = [];
+                }
+            }
+        });
     }
 
     updatePos() {

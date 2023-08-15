@@ -3,7 +3,8 @@
 import * as Phaser from 'phaser';
 import GameScreen from '../constants/GameScreen';
 import { Rim } from '../entity/rim';
-import { Dirs } from '../enums/Enum';
+import { Dirs, GlobalEvent } from '../enums/Enum';
+import GlobalEventEmitter from '../event/Event';
 
 export class GameScene extends Phaser.Scene {
   // private bird: Bird;
@@ -21,6 +22,7 @@ export class GameScene extends Phaser.Scene {
 
   init(): void {
     this.registry.set('score', -1);
+    this.setupEvent();
   }
 
   create() {
@@ -63,6 +65,12 @@ export class GameScene extends Phaser.Scene {
     this.input.once('pointerup', function () {
     }, this);
     //#endregion
+
+  }
+
+  setupEvent()
+  {
+    GlobalEventEmitter.on(GlobalEvent.SCORE,()=>{console.log('we did it!')})
   }
 
   bounce() {
@@ -79,6 +87,8 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
+
+    
 
     // if (!this.bird.getDead()) {
     //   this.background.tilePositionX += 4;
