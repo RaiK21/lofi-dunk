@@ -5,19 +5,21 @@ import * as Phaser from 'phaser';
 import GameScreen from '../constants/GameScreen';
 import GameSetting from '../constants/GameSetting';
 import { Rim } from '../entity/rim';
+import { ScoreDisplay } from '../entity/ScoreDisplay';
 import { Timebar } from '../entity/Timebar';
 import { Dirs, GameState, GlobalEvent } from '../enums/Enum';
 import GlobalEventEmitter from '../event/Event';
 
 export class GameScene extends Phaser.Scene {
   // private bird: Bird;
-  // private pipes: Phaser.GameObjects.Group;
+  // private pipes: Phaser.GameObjects.Group; 
   // private background: Phaser.GameObjects.TileSprite;
   // private scoreText: Phaser.GameObjects.BitmapText;
   // private timer: Phaser.Time.TimerEvent;
   private ball: Phaser.Physics.Matter.Image | null = null;
   private rim: Rim | null = null;
   private _timeBar: Timebar | null = null;
+  private _scoreDisplay: ScoreDisplay | null = null;
   private _gameState: GameState = GameState.READY;
   private _gameDir: Dirs = Dirs.LEFT;
   private _ballVelocity: Vector = { x: 0, y: 0 };
@@ -49,6 +51,7 @@ export class GameScene extends Phaser.Scene {
       y: -GameScreen.HEIGHT,
     })
     this._timeBar = new Timebar(this)
+    this._scoreDisplay = new ScoreDisplay(this)
     this._setNextLevel();
     //#endregion
 
