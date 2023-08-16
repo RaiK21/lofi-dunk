@@ -19,6 +19,7 @@ export default class GameSetting {
 
   static SCORE = {
     MULTPLIER: 1,
-    MAX_COMBO: 10
+    MAX_COMBO: 10,
+    START_COMBO: 1,
   }
 }

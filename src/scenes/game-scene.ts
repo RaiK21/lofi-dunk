@@ -3,21 +3,20 @@ import * as Phaser from 'phaser';
 import GameScreen from '../constants/GameScreen';
 import GameSetting from '../constants/GameSetting';
 import { Rim } from '../entity/rim';
-import { ScoreDisplay } from '../entity/ScoreDisplay';
-import { Timebar } from '../entity/Timebar';
 import { Dirs, GameState, GlobalEvent } from '../enums/Enum';
 import GlobalEventEmitter from '../event/Event';
 import { GameSceneUI } from './game-scene-ui';
 
 export class GameScene extends Phaser.Scene {
   private ball: Phaser.Physics.Matter.Image | null = null;
+  private floor: Phaser.Physics.Matter.Image | null = null;
   private rim: Rim | null = null;
   private _gameState: GameState = GameState.READY;
   private _gameDir: Dirs = Dirs.LEFT;
   private _ballVelocity: Vector = { x: 0, y: 0 };
   private _level: number = 0;
   private _score: number = 0;
-  private _comboCount: number = 1;
+  private _comboCount: number = GameSetting.SCORE.START_COMBO;;
   private uiScene: GameSceneUI | null = null;
 
   constructor() {
@@ -34,11 +33,14 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
-    this.matter.world.setBounds(-GameScreen.QUARTER_X, 0, GameScreen.WIDTH * 1.5, GameScreen.HEIGHT * 0.875, 32, false, false, false, true);
-
+    // this.matter.world.setBounds(-GameScreen.QUARTER_X, 0, GameScreen.WIDTH * 1.5, GameScreen.HEIGHT * 0.875, 32, false, false, false, true);
     //#region Ball
-    this.ball = this.matter.add.image(GameScreen.CENTER_X, GameScreen.CENTER_Y, 'ball')
+    this.ball = this.matter.add.image(GameScreen.CENTER_X, GameScreen.CENTER_Y, 'circle')
     this.ball.setCircle(this.ball.width * 0.5).setFriction(0.005).setBounce(1);
+    this.floor = this.matter.add.image(GameScreen.CENTER_X, GameScreen.HEIGHT * 0.9375, 'dot', undefined, {
+      label: 'floor',
+      isStatic: true,
+    }).setScale(GameScreen.WIDTH * 1.5, GameScreen.HEIGHT * 0.125)
     //#endregion
     //#region rim
     this.rim = new Rim(this, {
@@ -70,13 +72,32 @@ export class GameScene extends Phaser.Scene {
     this.input.once('pointerup', function () {
     }, this);
     //#endregion
+    this._setupEvent();
+  }
+
+  private _setupEvent() {
+    this.matter.world.on('collisionstart', event => {
+      //  Loop through all of the collision pairs
+      const pairs = event.pairs;
+      for (let i = 0; i < pairs.length; i++) {
+        const bodyA = pairs[i].bodyA;
+        const bodyB = pairs[i].bodyB;
+        //  We only want sensor collisions
+        if (pairs[i].isSensor) {
+        }
+        else {
+          if (bodyA.label === 'floor' || bodyB.label === 'floor') {
+            this._comboCount = GameSetting.SCORE.START_COMBO;
+          }
+        }
+      }
+    });
   }
 
   private _updateScore() {
     const scoreGain = GameSetting.SCORE.MULTPLIER * this._comboCount;
     this._score += scoreGain;
     this._comboCount = this._comboCount < GameSetting.SCORE.MAX_COMBO ? this._comboCount += 1 : GameSetting.SCORE.MAX_COMBO;
-
 
     if (this.rim) {
       let scorePosX: number = 0;
@@ -141,6 +162,8 @@ export class GameScene extends Phaser.Scene {
   //   let currentTime = GameSetting.TIME.MAX - this._level * GameSetting.TIME.REDUCE;
   //   this._timeBar?.startTimer(currentTime <= GameSetting.TIME.MIN ? GameSetting.TIME.MIN : currentTime);
   // }
+
+
 
   update(): void {
     if (this.ball) {

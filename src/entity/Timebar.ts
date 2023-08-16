@@ -8,6 +8,7 @@ export class Timebar extends Phaser.GameObjects.Container {
     private _graphics;
 
     private _progress: number = 0;
+    private _barWidth: number = GameScreen.QUARTER_X * 3
     constructor(scene: Phaser.Scene) {
         super(scene);
         this.scene = scene;
@@ -36,8 +37,8 @@ export class Timebar extends Phaser.GameObjects.Container {
         if (this._progress < 1) {
             this._graphics.clear();
             this._graphics.fillStyle(0xffffff, 1);
-            const progress = GameScreen.CENTER_X - GameScreen.CENTER_X * (this._progress <= 0.99 ? this._progress : 1);
-            this._graphics.fillRect(GameScreen.QUARTER_X, GameScreen.CENTER_Y * 0.125, progress, 32);
+            const progress = this._barWidth - this._barWidth * (this._progress <= 0.99 ? this._progress : 1);
+            this._graphics.fillRect(GameScreen.QUARTER_X*0.5, GameScreen.CENTER_Y * 0.125, progress, 32);
         }
     }
 }

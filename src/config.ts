@@ -21,7 +21,7 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
     default: 'matter',
     matter: {
       // enableSleeping: true
-      debug: true,
+      debug: false,
     }
   },
   backgroundColor: '#000',

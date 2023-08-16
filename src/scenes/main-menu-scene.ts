@@ -21,7 +21,7 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.startBtn = this.add.sprite(GameScreen.CENTER_X, GameScreen.QUARTER_Y * 3, 'startBtn').setInteractive().on('pointerup', () => {
+    this.startBtn = this.add.sprite(GameScreen.CENTER_X, GameScreen.QUARTER_Y * 3, 'dot').setScale(164,60).setInteractive().on('pointerup', () => {
       this.scene.start('GameScene');
     }, this);
     // this.titleBitmapText = this.add.bitmapText(
