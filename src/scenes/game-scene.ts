@@ -73,10 +73,23 @@ export class GameScene extends Phaser.Scene {
   }
 
   private _updateScore() {
-    this._score += GameSetting.SCORE.MULTPLIER * this._comboCount;
+    const scoreGain = GameSetting.SCORE.MULTPLIER * this._comboCount;
+    this._score += scoreGain;
     this._comboCount = this._comboCount < GameSetting.SCORE.MAX_COMBO ? this._comboCount += 1 : GameSetting.SCORE.MAX_COMBO;
-    console.log(this._score)
-    this.uiScene?.updateScore(this._score)
+
+
+    if (this.rim) {
+      let scorePosX: number = 0;
+      switch (this._gameDir) {
+        case Dirs.LEFT:
+          scorePosX = GameScreen.QUARTER_X;
+          break;
+        case Dirs.RIGHT:
+          scorePosX = GameScreen.QUARTER_X * 3;
+          break;
+      }
+      this.uiScene?.updateScore(scorePosX, this.rim?.y, this._score, scoreGain)
+    }
   }
 
   setupEvent() {

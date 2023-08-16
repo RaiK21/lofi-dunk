@@ -1,12 +1,14 @@
 import * as Phaser from 'phaser';
 import GameSetting from '../constants/GameSetting';
 import { ScoreDisplay } from '../entity/ScoreDisplay';
+import { ScoreGain } from '../entity/ScoreGain';
 import { Timebar } from '../entity/Timebar';
 
 export class GameSceneUI extends Phaser.Scene {
   private _timeBar: Timebar | null = null;
 
   private _scoreDisplay: ScoreDisplay | null = null;
+  private _scoreGain: ScoreGain | null = null;
 
   constructor() {
     super({
@@ -20,6 +22,7 @@ export class GameSceneUI extends Phaser.Scene {
   create() {
     this._timeBar = new Timebar(this)
     this._scoreDisplay = new ScoreDisplay(this)
+    this._scoreGain = new ScoreGain(this)
   }
 
   updateTimerBar(level: number) {
@@ -31,11 +34,16 @@ export class GameSceneUI extends Phaser.Scene {
     this._timeBar?.stopTimer()
   }
 
-  updateScore(score: number) {
+  updateScore(x: number, y: number, score: number,scoreGain: number) {
     this._scoreDisplay?.updateScore(score)
+    this.showScoreGain(x, y, scoreGain)
   }
 
   update(): void {
     this._timeBar?.update();
+  }
+
+  showScoreGain(x: number, y: number, score: number) {
+    this._scoreGain?.playScoreGain(x, y, score)
   }
 }
