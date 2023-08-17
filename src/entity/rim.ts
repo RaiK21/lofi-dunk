@@ -6,12 +6,23 @@ import GlobalEventEmitter from '../event/Event';
 export class Rim extends Phaser.GameObjects.Container {
     private edge1: Phaser.Physics.Matter.Image | null = null;
     private edge2: Phaser.Physics.Matter.Image | null = null;
+    private edge3: Phaser.Physics.Matter.Image | null = null;
     private sensor1: Phaser.Physics.Matter.Image | null = null;
     private sensor2: Phaser.Physics.Matter.Image | null = null;
     private hitLog: string[] = [];
     private objects: any[] = [];
     private gapRadius: number = 50;
     private colliderLength: number = 10;
+    private rimLength = {
+        x: 10,
+        y: 50
+    };
+
+    private sensorLen = {
+        x: 40,
+        y: 10
+    };
+
     private _lastPosition: Vector = { x: 0, y: 0 }
 
     private _spawnHeight: Vector = { x: GameScreen.QUARTER_Y, y: GameScreen.QUARTER_Y * 3 }
@@ -21,24 +32,27 @@ export class Rim extends Phaser.GameObjects.Container {
         super(scene);
         this.scene = scene;
         this.setPosition(config.x, config.y)
-        this.edge1 = this.scene.matter.add.image(-this.gapRadius, 0, 'dot').setStatic(true).setScale(this.colliderLength, this.colliderLength)
+        this.edge1 = this.scene.matter.add.image(-this.gapRadius, 0, 'dot').setStatic(true).setScale(this.rimLength.x, this.rimLength.y)
         this.objects.push(this.edge1)
-        this.edge2 = this.scene.matter.add.image(this.gapRadius, 0, 'dot').setStatic(true).setScale(this.colliderLength, this.colliderLength)
+
+        this.edge2 = this.scene.matter.add.image(this.gapRadius, 0, 'dot').setStatic(true).setScale(this.rimLength.x, this.rimLength.y)
         this.objects.push(this.edge2)
 
+        this.edge3 = this.scene.matter.add.image(0, this.rimLength.y * 0.5 - this.rimLength.x * 0.5, 'dot').setStatic(true).setSensor(true).setScale(this.rimLength.y * 2, this.rimLength.x)
+        this.objects.push(this.edge3)
 
-        this.sensor1 = this.scene.matter.add.image(0, 10, 'dot', undefined, {
+        this.sensor1 = this.scene.matter.add.image(0, -10, 'dot', undefined, {
             label: 'topSensor',
             isSensor: true,
             isStatic: true,
-        }).setScale(this.colliderLength, this.colliderLength)
+        }).setScale(this.sensorLen.x, this.sensorLen.y).setAlpha(0)
         this.objects.push(this.sensor1)
 
-        this.sensor2 = this.scene.matter.add.image(0, 40, 'dot', undefined, {
+        this.sensor2 = this.scene.matter.add.image(0, 30, 'dot', undefined, {
             label: 'btmSensor',
             isSensor: true,
             isStatic: true,
-        }).setScale(this.colliderLength, this.colliderLength)
+        }).setScale(this.sensorLen.x, this.sensorLen.y).setAlpha(0)
         this.objects.push(this.sensor2)
 
         this.updatePos();
@@ -170,6 +184,6 @@ export class Rim extends Phaser.GameObjects.Container {
     private _getRandomY() {
         return Phaser.Math.FloatBetween(this._spawnHeight.x, this._spawnHeight.y);
     }
-    
+
 
 }
