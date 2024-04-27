@@ -13,5 +13,6 @@ export enum GlobalEvent {
 export enum GameState {
     READY = "ready",
     SCORING = "scoring",
-    OVER = 'over'
+    OVER = "over",
+    RETRY = "retry"
 }

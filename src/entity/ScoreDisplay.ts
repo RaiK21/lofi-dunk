@@ -16,4 +16,7 @@ export class ScoreDisplay extends Phaser.GameObjects.Container {
         this.scoreTxt?.setText(score + '')
     }
 
+    updatePos(x: number,y:number) {
+        this.scoreTxt?.setPosition(x,y)
+    }
 }

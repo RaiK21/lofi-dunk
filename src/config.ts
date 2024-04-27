@@ -4,7 +4,7 @@ import { GameScene } from './scenes/game-scene';
 import { GameSceneUI } from './scenes/game-scene-ui';
 import { MainMenuScene } from './scenes/main-menu-scene';
 export const GameConfig: Phaser.Types.Core.GameConfig = {
-  title: 'Lofi Dunk',
+  title: 'Shadow Dunk',
   type: Phaser.AUTO,
   scale: {
     parent: 'game',

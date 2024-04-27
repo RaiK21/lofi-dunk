@@ -46,7 +46,7 @@ export class BootScene extends Phaser.Scene {
     this.load.image('startBtn', 'assets/images/button_1.png');
     this.load.image('dot', 'assets/images/whiteDot.jpg');
     this.load.image('circle', 'assets/images/circle.png');
-  }
+     }
 
   update(): void {
     this.scene.start('MainMenuScene');
