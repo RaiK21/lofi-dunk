@@ -10,6 +10,7 @@ import { GameSceneUI } from "./game-scene-ui";
 export class GameScene extends Phaser.Scene {
   private ball: Phaser.Physics.Matter.Image | null = null;
   private floor: Phaser.Physics.Matter.Image | null = null;
+  private ceiling: Phaser.Physics.Matter.Image | null = null;
   private rim: Rim | null = null;
   private _gameState: GameState = GameState.READY;
   private _gameDir: Dirs = Dirs.LEFT;
@@ -63,6 +64,21 @@ export class GameScene extends Phaser.Scene {
       .setCircle(this.ball.width * 0.5)
       .setFriction(0.005)
       .setBounce(1);
+    
+    this.ceiling = this.matter.add
+      .image(
+        GameScreen.CENTER_X,
+        GameScreen.HEIGHT * 0.01,
+        "dot",
+        undefined,
+        {
+          label: "ceiling",
+          isStatic: true,
+        }
+      )
+      .setScale(GameScreen.WIDTH * 1.5, GameScreen.HEIGHT * 0.02)
+      .setTint(0x828282, 0x828282, 0x828282, 0x828282);
+
     this.floor = this.matter.add
       .image(
         GameScreen.CENTER_X,
