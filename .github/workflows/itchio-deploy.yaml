@@ -1,0 +1,48 @@
+name: Itch.io Deploy Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  itchio-deploy:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js 
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: 'npm'
+      - run: node --version
+
+      - name: Install yarn
+        run: npm install --global yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: yarn build
+        run: yarn build
+        env:
+          CI: true
+
+      - run: ls
+
+      - name: Fix Assets Path
+        run: npm run fix-path
+        
+      - name: Deploy
+        uses: yeslayla/butler-publish-itchio-action@v1.0.3
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.ITCH_IO_API_KEY }}
+          CHANNEL: HTML
+          ITCH_GAME: shadow-dunk
+          ITCH_USER: rai-k
+          PACKAGE: ./dist
