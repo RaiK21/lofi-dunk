@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "fix-path":"bash ./path-fixer.sh"
   },
   "repository": {
     "type": "git",
