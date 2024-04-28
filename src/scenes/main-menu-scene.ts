@@ -1,5 +1,7 @@
 import * as Phaser from 'phaser';
 import GameScreen from '../constants/GameScreen';
+import GlobalEventEmitter from '../event/Event';
+import { GlobalEvent } from '../enums/Enum';
 
 export class MainMenuScene extends Phaser.Scene {
 
@@ -43,6 +45,7 @@ export class MainMenuScene extends Phaser.Scene {
 
         this.startBtn = this.add.sprite(0, 0, 'dot').setScale(GameScreen.WIDTH,GameScreen.HEIGHT).setInteractive().on('pointerup', () => {
           this.scene.start('GameScene');
+          GlobalEventEmitter.emit(GlobalEvent.SFX_UI);
         }, this).setOrigin(0).setAlpha(0.01)
 
       //   const chain1 = this.tweens.chain({

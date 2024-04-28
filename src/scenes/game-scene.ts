@@ -31,6 +31,7 @@ export class GameScene extends Phaser.Scene {
     this.setupEvent();
     this.scene.launch("GameSceneUI");
     this.uiScene = this.scene.get("GameSceneUI") as GameSceneUI;
+    GlobalEventEmitter.emit(GlobalEvent.GAME_START);
   }
 
   create() {
@@ -134,6 +135,7 @@ export class GameScene extends Phaser.Scene {
       .on(
         "pointerup",
         () => {
+          GlobalEventEmitter.emit(GlobalEvent.SFX_UI);
           this.scene.restart();
         },
         this
@@ -157,6 +159,11 @@ export class GameScene extends Phaser.Scene {
         } else {
           if (bodyA.label === "floor" || bodyB.label === "floor") {
             this._comboCount = GameSetting.SCORE.START_COMBO;
+            GlobalEventEmitter.emit(GlobalEvent.BANG_SFX)
+          }
+
+          if (bodyA.label === "ceiling" || bodyB.label === "ceiling") {
+            GlobalEventEmitter.emit(GlobalEvent.BANG_SFX)
           }
         }
       }
@@ -183,6 +190,8 @@ export class GameScene extends Phaser.Scene {
       }
       this.uiScene?.updateScore(scorePosX, this.rim?.y, this._score, scoreGain);
     }
+    GlobalEventEmitter.emit(GlobalEvent.POINT_SFX)
+    GlobalEventEmitter.emit(GlobalEvent.GET_SFX)
   }
 
   setupEvent() {
@@ -213,6 +222,7 @@ export class GameScene extends Phaser.Scene {
         this._gameState=GameState.OVER;
         break;
       default:
+        GlobalEventEmitter.emit(GlobalEvent.BOUNCE_SFX)
         this.ball?.setVelocity(this._ballVelocity.x, this._ballVelocity.y);
 
     }
@@ -265,6 +275,8 @@ export class GameScene extends Phaser.Scene {
         this.graphics.strokeCircleShape(circle);
       }
     }
+
+
     if (this.ball) {
       if (this.ball.x - this.ball.width * 0.5 > GameScreen.WIDTH) {
         this.ball.setX(GameScreen.LEFT - this.ball.width * 0.5);

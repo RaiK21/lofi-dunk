@@ -32,10 +32,14 @@ export class Rim extends Phaser.GameObjects.Container {
         super(scene);
         this.scene = scene;
         this.setPosition(config.x, config.y)
-        this.edge1 = this.scene.matter.add.image(-this.gapRadius, 0, 'dot').setStatic(true).setScale(this.rimLength.x, this.rimLength.y)
+        this.edge1 = this.scene.matter.add.image(-this.gapRadius, 0, 'dot',undefined, {
+            label: 'edge',
+        }).setStatic(true).setScale(this.rimLength.x, this.rimLength.y)
         this.objects.push(this.edge1)
 
-        this.edge2 = this.scene.matter.add.image(this.gapRadius, 0, 'dot').setStatic(true).setScale(this.rimLength.x, this.rimLength.y)
+        this.edge2 = this.scene.matter.add.image(this.gapRadius, 0, 'dot',undefined, {
+            label: 'edge',
+        }).setStatic(true).setScale(this.rimLength.x, this.rimLength.y)
         this.objects.push(this.edge2)
 
         this.edge3 = this.scene.matter.add.image(0, this.rimLength.y * 0.5 - this.rimLength.x * 0.5, 'dot').setStatic(true).setSensor(true).setScale(this.rimLength.y * 2, this.rimLength.x)
@@ -80,6 +84,9 @@ export class Rim extends Phaser.GameObjects.Container {
                             GlobalEventEmitter.emit(GlobalEvent.SCORE)
                         }
                     }
+                }
+                if (bodyA.label === 'edge' || bodyB.label === 'edge') {
+                    GlobalEventEmitter.emit(GlobalEvent.BANG_SFX)
                 }
             }
         });

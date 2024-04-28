@@ -1,5 +1,7 @@
 import * as Phaser from "phaser";
 import GameScreen from "../constants/GameScreen";
+import { GameScenes} from "../enums/Enum";
+
 
 export class BootScene extends Phaser.Scene {
   private loadingBar: Phaser.GameObjects.Graphics | null = null;
@@ -43,12 +45,18 @@ export class BootScene extends Phaser.Scene {
       this
     );
 
-    // load out package
-    // this.load.pack('preload', './assets/pack.json', 'preload');
     this.load.image("logo", "assets/images/logo.png");
     this.load.image("startBtn", "assets/images/button_1.png");
     this.load.image("dot", "assets/images/whiteDot.jpg");
     this.load.image("circle", "assets/images/circle.png");
+
+    this.load.audio("bgm", "assets/Sounds/Music/bgm.mp3");
+    this.load.audio("gameover", "assets/Sounds/SE/gg.mp3");
+    this.load.audio("ui", "assets/Sounds/SE/ui.mp3");
+    this.load.audio("bounce", "assets/Sounds/SE/score2.wav");
+    this.load.audio("get", "assets/Sounds/SE/get.mp3");
+    this.load.audio("point", "assets/Sounds/SE/block_break.wav");
+    this.load.audio("bang", "assets/Sounds/SE/block_hit.wav");
   }
 
   private _loadLevelData(level: string) {
@@ -92,7 +100,8 @@ export class BootScene extends Phaser.Scene {
     if (this._isLoadComplete && !this._isTransitionDone) {
       this._isTransitionDone = true;
       this.fadeOutLogoTween( () => {
-        this.scene.start('MainMenuScene');
+        this.scene.launch('MainMenuScene');
+        this.scene.launch(GameScenes.AUDIO_MANAGER);
       });
     }
   }

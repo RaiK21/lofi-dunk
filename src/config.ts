@@ -3,6 +3,7 @@ import { BootScene } from './scenes/boot-scene';
 import { GameScene } from './scenes/game-scene';
 import { GameSceneUI } from './scenes/game-scene-ui';
 import { MainMenuScene } from './scenes/main-menu-scene';
+import { AudioManagerScene } from './scenes/AudioManagerScene';
 export const GameConfig: Phaser.Types.Core.GameConfig = {
   title: 'Shadow Dunk',
   type: Phaser.AUTO,
@@ -13,7 +14,7 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
     width: 720,
     height: 1280,
   },
-  scene: [BootScene, MainMenuScene, GameScene, GameSceneUI],
+  scene: [BootScene, MainMenuScene, GameScene, GameSceneUI,AudioManagerScene],
   input: {
     keyboard: true
   },
