@@ -27,6 +27,7 @@ export enum GameState {
     READY = "ready",
     SCORING = "scoring",
     OVER = "over",
+    CLOSING = "closing",
     RETRY = "retry"
 }
 

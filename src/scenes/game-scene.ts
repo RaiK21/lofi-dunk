@@ -65,18 +65,12 @@ export class GameScene extends Phaser.Scene {
       .setCircle(this.ball.width * 0.5)
       .setFriction(0.005)
       .setBounce(1);
-    
+
     this.ceiling = this.matter.add
-      .image(
-        GameScreen.CENTER_X,
-        GameScreen.HEIGHT * 0.01,
-        "dot",
-        undefined,
-        {
-          label: "ceiling",
-          isStatic: true,
-        }
-      )
+      .image(GameScreen.CENTER_X, GameScreen.HEIGHT * 0.01, "dot", undefined, {
+        label: "ceiling",
+        isStatic: true,
+      })
       .setScale(GameScreen.WIDTH * 1.5, GameScreen.HEIGHT * 0.02)
       .setTint(0x828282, 0x828282, 0x828282, 0x828282);
 
@@ -159,11 +153,11 @@ export class GameScene extends Phaser.Scene {
         } else {
           if (bodyA.label === "floor" || bodyB.label === "floor") {
             this._comboCount = GameSetting.SCORE.START_COMBO;
-            GlobalEventEmitter.emit(GlobalEvent.BANG_SFX)
+            GlobalEventEmitter.emit(GlobalEvent.BANG_SFX);
           }
 
           if (bodyA.label === "ceiling" || bodyB.label === "ceiling") {
-            GlobalEventEmitter.emit(GlobalEvent.BANG_SFX)
+            GlobalEventEmitter.emit(GlobalEvent.BANG_SFX);
           }
         }
       }
@@ -190,8 +184,9 @@ export class GameScene extends Phaser.Scene {
       }
       this.uiScene?.updateScore(scorePosX, this.rim?.y, this._score, scoreGain);
     }
-    GlobalEventEmitter.emit(GlobalEvent.POINT_SFX)
-    GlobalEventEmitter.emit(GlobalEvent.GET_SFX)
+    GlobalEventEmitter.emit(GlobalEvent.POINT_SFX);
+    GlobalEventEmitter.emit(GlobalEvent.GET_SFX);
+    this.cameras.main.shake(200);
   }
 
   setupEvent() {
@@ -206,25 +201,39 @@ export class GameScene extends Phaser.Scene {
     GlobalEventEmitter.on(GlobalEvent.OVER, () => {
       this._setGameState(GameState.OVER);
       this.rim?.moveOut(() => {
-        this._setGameState(GameState.RETRY);
-        this.uiScene?.updateGameOver();
-        this.startBtn.setAlpha(0.01);
-      });   
+        this._setGameState(GameState.CLOSING);
+        this.cameras.main.shake(500,1 );
+      });
     });
+
+    this.cameras.main.on("camerashakecomplete", this.updateGameOver,this);
+  }
+
+  updateGameOver(){
+    if (this._gameState === GameState.CLOSING) {
+      this.uiScene?.updateGameOver();
+      this.startBtn.setAlpha(0.01);
+      this._score=0;
+      this._level=0;
+      this.ball?.setAlpha(0)
+      this.floor?.setAlpha(0)
+      this.ceiling?.setAlpha(0)
+      this._setGameState(GameState.RETRY)
+    }
   }
 
   bounce() {
-    switch(this._gameState){
+    switch (this._gameState) {
       case GameState.OVER:
+      case GameState.CLOSING:
         break;
       case GameState.RETRY:
         this.scene.restart();
-        this._gameState=GameState.OVER;
+        this._gameState = GameState.OVER;
         break;
       default:
-        GlobalEventEmitter.emit(GlobalEvent.BOUNCE_SFX)
+        GlobalEventEmitter.emit(GlobalEvent.BOUNCE_SFX);
         this.ball?.setVelocity(this._ballVelocity.x, this._ballVelocity.y);
-
     }
   }
 

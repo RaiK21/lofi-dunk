@@ -14,7 +14,7 @@ export default class GameSetting {
   static TIME = {
     MAX: 8000,
     MIN: 3000,
-    REDUCE: 100,
+    REDUCE: 200,
   }
 
   static SCORE = {

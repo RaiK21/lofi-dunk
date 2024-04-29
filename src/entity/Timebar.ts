@@ -29,7 +29,7 @@ export class Timebar extends Phaser.GameObjects.Container {
     }
 
     update() {
-
+        // console.log(0xffffff)
         if (this._timer?.getProgress) {
             this._progress = this._timer?.getProgress()
         }
