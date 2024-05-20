@@ -13,13 +13,27 @@ export class BootScene extends Phaser.Scene {
   private _levels: any = [];
   constructor() {
     super({
-      key: 'BootScene'
+      key: 'BootScene',
+      pack: {
+        files: [
+          {
+            type: "image",
+            key: "logo",
+            url: "assets/images/logo.png",
+          },
+        ],
+      },
     });
   }
 
   preload() {
     // set the background and create loading bar
     this.cameras.main.setBackgroundColor(0x000);
+    this._logoImage = this.add.image(
+      GameScreen.CENTER_X,
+      GameScreen.CENTER_Y,
+      "logo"
+    );
     this.createLoadingbar();
     // pass value to change the loading bar fill
     this.load.on(
@@ -69,11 +83,6 @@ export class BootScene extends Phaser.Scene {
   }
 
   create(): void {
-    this._logoImage = this.add.image(
-      GameScreen.CENTER_X,
-      GameScreen.CENTER_Y,
-      "logo"
-    );
   }
 
   fadeOutLogoTween(callback?: () => void) {
